@@ -1435,4 +1435,4 @@ ER-диаграмма
    
 3. **Review** - отзыв о курсе:
    - id, application (OneToOne), rating, text
-   - created_at
+   - created_atг

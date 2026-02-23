@@ -1,0 +1,55 @@
+# Git ignore file for Django documentation project
+
+# Virtual environment
+venv/
+.env/
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.Python
+
+# Build directories
+build/
+dist/
+*.egg-info/
+*.egg
+
+# Docset output
+My Django Project.docset/
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*.DS_Store
+*.local
+
+# Python cache
+*.py[cod]
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Jupyter notebooks
+.ipynb_checkpoints/
+
+# Database files
+*.sqlite3
+*.db
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
