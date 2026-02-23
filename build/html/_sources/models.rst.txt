@@ -7,15 +7,38 @@
 
    Расширение для VSCode "Django" сильно упрощает работу с бд и не только. Благодаря ему можно использовать встроенные конструкции и уже в них вносить корректировки
 
-Модель Book
+Модель пользователя
 ^^^^^^^^^^^
-Первым делом нужно обозначить модель, указав ее название. Также нужно помнить, что модели и поля бд находятся в моделе "models". Поэтому обращение к ним происходит через models.
+Первым делом нужно обозначить модель, указав ее название. Также нужно помнить, что модели и поля бд находятся в моделе "models". Поэтому обращение к ним происходит через models. Создаем кастомную модель пользователя, которая расширяет стандартную модель Django.
 
 .. code-block:: python
 
-   class Book (models.Model):
+   # Обязательной импорт
+   from django.contrib.auth.models import AbstractUser 
+   from django.db import models
 
-Дальше нужно обозначить поля БД. Они различаются по типам данных, которые хранят.
+   class CustomUser(AbstractUser):
+   # Дополнительные поля к стандартной модели User
+   phone = models.CharField(max_length=15, blank=True, verbose_name='Телефон')
+   avatar = models.ImageField(upload_to='avatars/', blank=True, null=True, verbose_name='Аватар')
+   birth_date = models.DateField(blank=True, null=True, verbose_name='Дата рождения')
+
+   class Meta:
+       verbose_name = 'Пользователь'
+       verbose_name_plural = 'Пользователи'
+       
+   def __str__(self):
+       return self.username
+
+.. note::
+
+Не забывайте, что стандартные username, email и password уже указаны для модели User и их без крайней необходимости переопределять не нужно
+
+Также для переопределения модели User нужно указать этот факт в settings.py вот такой строкой кода:
+
+.. code-block:: python
+
+   AUTH_USER_MODEL = 'main.CustomUser'
 
 Строковые поля
 ^^^^^^^^^^^^^^
@@ -184,6 +207,10 @@ ImageField
        width_field='image_width'
    )
 
+.. note::
+
+   Значение поля upload_to указывается относительно MEDIA_ROOT, который должен быть указан в settings
+
 Специальные поля
 ^^^^^^^^^^^
 
@@ -223,16 +250,18 @@ ForeignKey
 - ``on_delete`` - поведение при удалении связанного объекта
 - ``related_name`` - имя для обратной связи
 
-**У одного автора может быть написано несколько книг:**
+**Один пользователь может создать несколько заявок:**
 
 .. code-block:: python
 
-   class Author(models.Model):
-      name = models.CharField(max_length=100)
+   class CustomUser(models.Model):
+   username = models.CharField(max_length=100)
+   email = models.EmailField()
 
-   class Book(models.Model):
-      title = models.CharField(max_length=100)
-      author = models.ForeignKey(Author, on_delete=models.CASCADE)
+   class Application(models.Model):
+   title = models.CharField(max_length=200)
+   description = models.TextField()
+   user = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='applications')
 
 ManyToManyField
 ~~~~~~~~~~~~~~~
@@ -284,19 +313,19 @@ OneToOneField
 
 .. code-block:: python
 
-   STATUS_CHOICES = [
-       ('draft', 'Черновик'),
-       ('published', 'Опубликовано'),
-       ('archived', 'В архиве'),
-   ]
+    STATUS_CHOICES = [
+        ('new', 'Новая'),
+        ('in_progress', 'В работе'),
+        ('completed', 'Завершена'),
+        ('rejected', 'Отклонена'),
+    ]
 
-   status = models.CharField(
-       max_length=20,
-       choices=STATUS_CHOICES,
-       default='draft',
-       verbose_name='Статус',
-       help_text='Статус записи'
-   )
+    status = models.CharField(
+        max_length=20, 
+        choices=STATUS_CHOICES, 
+        default='new',
+        verbose_name='Статус'
+    )
 
 Класс Meta и __str__
 ^^^^^^^^^^^^^^^^^^^^
@@ -306,39 +335,13 @@ OneToOneField
 
 Класс Meta внутри модели - это способ задать "мета-информацию" о модели, которая не относится к отдельным полям, а описывает модель в целом
 
-**Пример на книге:**
+**Пример на пользователе:**
 
 .. code-block:: python
 
-   class Book(models.Model):
-      title = models.CharField(max_length=100)
-      author = models.CharField(max_length=100)
-      price = models.DecimalField(max_digits=6, decimal_places=2)
-      
-      class Meta:
-         # Имя таблицы в БД (по умолчанию: appname_modelname)
-         db_table = 'books'
-         
-         # Человеко-читаемые имена
-         verbose_name = 'Книга'
-         verbose_name_plural = 'Книги'
-         
-         # Сортировка по умолчанию
-         ordering = ['title', '-price']  # по названию (возр.), затем по цене (убыв.)
-         
-         # Права доступа
-         permissions = [
-               ('can_mark_returned', 'Set book as returned'),
-         ]
-         
-         # Ограничения уникальности
-         unique_together = ['title', 'author']
-         
-         # Индексы для оптимизации
-         indexes = [
-               models.Index(fields=['title']),
-               models.Index(fields=['author', 'price']),
-         ]
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
       
 
 __str__
@@ -346,24 +349,12 @@ __str__
 
 Метод __str__ определяет строковое представление объекта. Это то, что ты видишь когда объект выводится в консоли, админке, формах и т.д. Без __str__ в админке будут отображаться объекты как "Book object (1)", что не информативно.
 
-**Пример на книге:**
+**Пример на пользователе:**
 
 .. code-block:: python
 
-   # Плохо - без __str__
-   class Book(models.Model):
-      title = models.CharField(max_length=100)
-      
-   # В админке: "Book object (1)"
-
-   # Хорошо - с __str__
-   class Book(models.Model):
-      title = models.CharField(max_length=100)
-      
-      def __str__(self):
-         return self.title
-
-   # В админке: "Война и мир"
+    def __str__(self):
+        return self.username
 
 После редактирования базы данных нужно создать и применить миграции:
 
@@ -387,8 +378,8 @@ __str__
       
       # Пример использования модели Book
       from django.contrib import admin
-      from .models import Book
+      from .models import Application
 
-      admin.site.register(Book)
+      admin.site.register(Application)
 
 После настройки БД можно перейти к :doc:`templates` чтобы создать html-шаблоны для страниц.

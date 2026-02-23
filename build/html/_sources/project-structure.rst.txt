@@ -48,6 +48,23 @@
        'main'
    ]
 
+Для приложения нам нужно будет использовать статические файлы такие как изображения и стили. Таким образом создадим директорию static в нашем приложении main и пропишем для них путь в settings.py:
+
+.. code-block:: python
+
+   STATIC_URL = '/static/'
+   STATICFILES_DIRS = [
+      os.path.join(BASE_DIR, 'static'),
+   ]
+   STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+Также укажем директорию для media-файлов.
+
+.. code-block:: python
+
+   MEDIA_URL = '/media/'
+   MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 Создание папок для статических и медиа файлов
 ---------------------------------------------
 

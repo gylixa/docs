@@ -16,6 +16,7 @@
 7. :doc:`forms` - Работа с формами
 8. :doc:`admin` - Настройка админ-панели
 9. :doc:`git` - Работа с гитом
+10. :doc:`seo` - SEO оптимизация
 
 Полное содержание
 -----------------
@@ -27,11 +28,10 @@
    setup
    project-structure
    models
-   views
    templates
+   views
    urls
    forms
    admin
-   static-files
-   auth
    git
+   seo

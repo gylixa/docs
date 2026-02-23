@@ -1,251 +1,358 @@
-Настройка админ-панели Django
-==============================
+Админка Django (admin.py)
+^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-В этом разделе мы настроим административную панель Django для удобного управления данными нашего приложения. Админка предоставляет интерфейс для CRUD операций (Create, Read, Update, Delete) с моделями.
+Основные концепции
+===================
 
-Основной файл admin.py
-----------------------
+``admin.py`` используется для настройки административного интерфейса Django. Он позволяет:
+- Регистрировать модели для отображения в админке
+- Кастомизировать внешний вид и поведение моделей
+- Добавлять поиск, фильтрацию и действия
+- Контролировать права доступа
 
-Файл ``front/admin.py`` содержит регистрацию моделей и кастомизацию интерфейса административной панели.
-
-Импорт моделей и модулей администрирования
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+1. Базовая регистрация модели
+------------------------------
 
 .. code-block:: python
+   :linenos:
 
    from django.contrib import admin
-   from django.contrib.auth.admin import UserAdmin
-   from .models import (
-       CustomUser, 
-       Category,
-       Product,
-       CartItem,
-       Order,
-       OrderItem,
-   )
+   from .models import Product
+   
+   admin.site.register(Product)
 
-Импортируются стандартные классы администрирования Django и все модели приложения, которые нужно зарегистрировать в админ-панели.
+**Объяснение:** Минимальный код для добавления модели Product в админку. Django создаст стандартный интерфейс для CRUD операций.
 
-Кастомизация админ-класса для пользователя
-------------------------------------------
+2. Кастомизация через ModelAdmin
+--------------------------------
 
 .. code-block:: python
+   :linenos:
 
-   class CustomUserAdmin(UserAdmin):
+   from django.contrib import admin
+   from .models import Product
+   
+   class ProductAdmin(admin.ModelAdmin):
+       list_display = ['name', 'price', 'in_stock', 'created_at']
+       list_filter = ['category', 'in_stock']
+       search_fields = ['name', 'description']
+       ordering = ['-created_at']
+   
+   admin.site.register(Product, ProductAdmin)
 
-Класс ``CustomUserAdmin`` наследуется от ``UserAdmin`` - стандартного административного класса Django для управления пользователями. Это позволяет сохранить всю базовую функциональность и добавить кастомные поля.
+**Объяснение:** ``ModelAdmin`` позволяет кастомизировать отображение модели. ``list_display`` - поля в списке, ``list_filter`` - фильтры справа, ``search_fields`` - поиск по указанным полям, ``ordering`` - сортировка.
 
-Настройка отображения списка пользователей
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-       list_display = ('username', 'email', 'first_name', 'last_name', 'phone', 'is_staff')
-
-**list_display:** Определяет какие поля отображаются в списке пользователей в админ-панели. Добавлено поле ``phone`` для отображения номера телефона.
-
-Настройка поиска
-^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-       search_fields = ('username', 'email', 'first_name', 'last_name', 'phone')
-
-**search_fields:** Поля по которым осуществляется поиск в админ-панели. Включено поле ``phone`` для поиска по номеру телефона.
-
-Настройка сортировки
-^^^^^^^^^^^^^^^^^^^^
+3. Декоратор @admin.register
+-----------------------------
 
 .. code-block:: python
+   :linenos:
 
-       ordering = ('username',)
+   from django.contrib import admin
+   from .models import Category, Product
+   
+   @admin.register(Category)
+   class CategoryAdmin(admin.ModelAdmin):
+       list_display = ['name', 'product_count']
+   
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       list_display = ['name', 'category', 'price']
 
-**ordering:** Определяет порядок сортировки по умолчанию. Пользователи сортируются по имени пользователя в алфавитном порядке.
+**Объяснение:** Декоратор ``@admin.register`` - современный способ регистрации моделей. Декоратор принимает модель как аргумент и связывает её с классом ModelAdmin.
 
-Кастомизация формы редактирования пользователя
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-       fieldsets = (
-           (None, {'fields': ('username', 'password')}),
-           ('Personal info', {'fields': ('first_name', 'last_name', 'email', 'phone')}),
-           ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
-           ('Important dates', {'fields': ('last_login', 'date_joined')}),
-           ('Additional info', {'fields': ('address', 'age', 'birth_date', 'gender', 'city', 'country', 'occupation', 'avatar')}),
-       )
-
-**fieldsets:** Группирует поля в логические секции для удобства редактирования:
-
-- **None** - базовые поля (username, password)
-- **Personal info** - персональная информация
-- **Permissions** - права доступа и группы
-- **Important dates** - важные даты (системные)
-- **Additional info** - дополнительные поля кастомной модели
-
-Регистрация кастомного пользователя
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-   admin.site.register(CustomUser, CustomUserAdmin)
-
-Регистрирует модель ``CustomUser`` с кастомным административным классом ``CustomUserAdmin``.
-
-Регистрация модели Category с декоратором
+4. Раздельная регистрация и кастомизация
 -----------------------------------------
 
 .. code-block:: python
+   :linenos:
 
-   # Register Category
-   @admin.register(Category)
-   class CategoryAdmin(admin.ModelAdmin):
-
-Альтернативный способ регистрации моделей с использованием декоратора ``@admin.register()``. Более современный и читаемый подход.
-
-Базовая настройка CategoryAdmin
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. code-block:: python
-
-       list_display = ('name',)
-       search_fields = ('name',)
-
-**Минимальная конфигурация:** Для модели Category используется базовая настройка с отображением имени и возможностью поиска по названию.
-
-Регистрация модели Product
---------------------------
-
-.. code-block:: python
-
-   # Register Product
+   # Способ 1: Регистрация с кастомизацией сразу
+   admin.site.register(Product, ProductAdmin)
+   
+   # Способ 2: Создание экземпляра ModelAdmin
+   admin.site.register(Product, admin.ModelAdmin)
+   
+   # Способ 3: Декоратор (рекомендуется)
    @admin.register(Product)
    class ProductAdmin(admin.ModelAdmin):
-       list_display = ('name', 'category', 'price', 'created_at')
-       list_filter = ('category',)
-       search_fields = ('name', 'description')
+       pass
 
-Настройка отображения товаров
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Объяснение:** Django предлагает несколько способов регистрации моделей. Декоратор наиболее читаемый и рекомендуется для нового кода.
 
-**list_display:** Отображает название товара, категорию, цену и дату создания.
+5. Удаление регистрации (unregister)
+-------------------------------------
 
-**list_filter:** Добавляет фильтр по категориям в правую панель админки.
+.. code-block:: python
+   :linenos:
 
-**search_fields:** Позволяет искать товары по названию и описанию.
+   from django.contrib import admin
+   from django.contrib.auth.models import User, Group
+   
+   # Удаление стандартных моделей Django
+   admin.site.unregister(User)
+   admin.site.unregister(Group)
+   
+   # Регистрация с кастомизацией
+   @admin.register(User)
+   class CustomUserAdmin(admin.ModelAdmin):
+       list_display = ['username', 'email', 'is_staff']
 
-Регистрация модели CartItem
+**Объяснение:** ``unregister()`` удаляет модель из админки. Полезно для удаления стандартных моделей (User, Group) перед их кастомизированной перерегистрацией.
+
+6. Групповая регистрация
+-------------------------
+
+.. code-block:: python
+   :linenos:
+
+   from django.contrib import admin
+   from .models import Author, Book, Publisher
+   
+   # Регистрация нескольких моделей с одним ModelAdmin
+   class BaseAdmin(admin.ModelAdmin):
+       list_per_page = 20
+       save_on_top = True
+   
+   admin.site.register([Author, Book, Publisher], BaseAdmin)
+
+**Объяснение:** Можно зарегистрировать несколько моделей одновременно, передав список. Все модели получат одинаковую конфигурацию ModelAdmin.
+
+7. Встроенные редакторы (inlines)
+----------------------------------
+
+.. code-block:: python
+   :linenos:
+
+   from django.contrib import admin
+   from .models import Author, Book
+   
+   class BookInline(admin.TabularInline):
+       model = Book
+       extra = 1
+   
+   @admin.register(Author)
+   class AuthorAdmin(admin.ModelAdmin):
+       inlines = [BookInline]
+       list_display = ['name', 'book_count']
+
+**Объяснение:** ``TabularInline`` и ``StackedInline`` позволяют редактировать связанные модели на странице родительской модели. ``extra`` определяет количество пустых форм.
+
+8. Административные действия
+-----------------------------
+
+.. code-block:: python
+   :linenos:
+
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       actions = ['make_inactive']
+       
+       def make_inactive(self, request, queryset):
+           queryset.update(in_stock=False)
+           self.message_user(request, f"{queryset.count()} products deactivated")
+       make_inactive.short_description = "Mark selected as inactive"
+
+**Объяснение:** Кастомные действия позволяют выполнять операции с выбранными объектами. ``queryset`` содержит выбранные объекты, ``request`` - HTTP запрос.
+
+9. Права доступа и безопасность
+--------------------------------
+
+.. code-block:: python
+   :linenos:
+
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       # Кто может видеть модель
+       def has_module_permission(self, request):
+           return request.user.is_staff
+       
+       # Кто может добавлять объекты
+       def has_add_permission(self, request):
+           return request.user.is_superuser
+       
+       # Кто может изменять объекты
+       def has_change_permission(self, request, obj=None):
+           if obj and obj.created_by == request.user:
+               return True
+           return request.user.is_superuser
+
+**Объяснение:** Методы ``has_*_permission`` контролируют права доступа на уровне модели и объектов. Полезно для сложных систем прав.
+
+10. Кастомизация форм в админке
+--------------------------------
+
+.. code-block:: python
+   :linenos:
+
+   from django import forms
+   from .models import Product
+   
+   class ProductAdminForm(forms.ModelForm):
+       class Meta:
+           model = Product
+           fields = '__all__'
+           widgets = {
+               'description': forms.Textarea(attrs={'rows': 4}),
+           }
+   
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       form = ProductAdminForm
+       fieldsets = (
+           ('Основное', {'fields': ('name', 'price')}),
+           ('Дополнительно', {'fields': ('category', 'description')}),
+       )
+
+**Объяснение:** ``form`` позволяет использовать кастомную форму в админке. ``fieldsets`` организует поля в логические группы с заголовками.
+
+11. Переопределение шаблонов админки
+-------------------------------------
+
+.. code-block:: python
+   :linenos:
+
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       change_list_template = 'admin/myapp/change_list.html'
+       change_form_template = 'admin/myapp/change_form.html'
+       
+       class Media:
+           css = {'all': ('admin/css/custom.css',)}
+           js = ('admin/js/custom.js',)
+
+**Объяснение:** ``change_*_template`` переопределяют стандартные шаблоны. Класс ``Media`` добавляет кастомные CSS/JS файлы.
+
+Регистрация и удаление (register/unregister) - подробнее
+========================================================
+
+Паттерн unregister/register
 ---------------------------
 
 .. code-block:: python
+   :linenos:
 
-   # Register CartItem
-   @admin.register(CartItem)
-   class CartItemAdmin(admin.ModelAdmin):
-       list_display = ('user', 'product', 'quantity')
-       list_filter = ('user',)
+   # 1. Удаляем стандартную регистрацию
+   admin.site.unregister(User)
+   
+   # 2. Регистрируем с кастомизацией
+   @admin.register(User)
+   class CustomUserAdmin(UserAdmin):
+       list_display = ['username', 'email', 'first_name', 'last_name', 'is_active']
+       
+       # Добавляем кастомное поле в форму
+       fieldsets = (
+           (None, {'fields': ('username', 'password')}),
+           ('Personal info', {'fields': ('first_name', 'last_name', 'email')}),
+           ('Custom field', {'fields': ('custom_field',)}),
+       )
 
-Настройка элементов корзины
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
+**Объяснение:** Этот паттерн используется для расширения или изменения поведения стандартных моделей Django (User, Group, Permission).
 
-**list_display:** Показывает пользователя, товар и количество.
-
-**list_filter:** Фильтр по пользователям для быстрого поиска корзин конкретных пользователей.
-
-Регистрация модели Order
+Динамическая регистрация
 ------------------------
 
 .. code-block:: python
+   :linenos:
 
-   # Register Order
+   from django.apps import apps
+   
+   # Автоматическая регистрация всех моделей приложения
+   for model in apps.get_app_config('myapp').get_models():
+       admin.site.register(model)
+   
+   # Исключение определенных моделей
+   EXCLUDE_MODELS = ['AuditLog', 'SystemConfig']
+   app_models = apps.get_app_config('myapp').get_models()
+   
+   for model in app_models:
+       if model.__name__ not in EXCLUDE_MODELS:
+           admin.site.register(model)
+
+**Объяснение:** Автоматическая регистрация всех моделей приложения. Полезно для больших приложений или плагинов.
+
+Множественная админка для одной модели
+---------------------------------------
+
+.. code-block:: python
+   :linenos:
+
+   from django.contrib import admin
+   
+   # Первая админка для основной работы
+   @admin.register(Product, site=admin.site)
+   class ProductAdmin(admin.ModelAdmin):
+       list_display = ['name', 'price']
+   
+   # Вторая админка для архивных записей
+   class ArchivedProductAdmin(admin.ModelAdmin):
+       list_display = ['name', 'archived_at']
+       
+       def get_queryset(self, request):
+           return super().get_queryset(request).filter(archived=True)
+   
+   # Создаем отдельный сайт админки
+   archived_admin = admin.AdminSite(name='archivedadmin')
+   archived_admin.register(Product, ArchivedProductAdmin)
+
+**Объяснение:** Одна модель может быть зарегистрирована в нескольких админках с разной конфигурацией. Полезно для разделения функциональности.
+
+Лучшие практики работы с admin.py
+==================================
+
+1. **Используйте декоратор ``@admin.register``** для читаемости кода
+2. **Всегда указывайте ``list_display``** для удобства просмотра списка
+3. **Добавляйте поиск и фильтры** для больших таблиц
+4. **Разделяйте права доступа** через ``has_*_permission`` методы
+5. **Используйте unregister/register** для кастомизации стандартных моделей
+6. **Тестируйте админку** как и остальное приложение
+7. **Ограничивайте ``list_per_page``** для производительности
+8. **Добавляйте ``prefetch_related`` и ``select_related``** в ``get_queryset`` для оптимизации запросов
+9. **Используйте ``readonly_fields``** для полей, которые не должны изменяться
+10. **Логируйте важные действия** через сигналы или переопределенные методы save
+
+Пример полного файла admin.py
+-----------------------------
+
+.. code-block:: python
+   :linenos:
+
+   """
+   admin.py - Конфигурация административного интерфейса
+   """
+   
+   from django.contrib import admin
+   from django.contrib.auth.admin import UserAdmin
+   from django.contrib.auth.models import User, Group
+   from .models import Category, Product, Order
+   
+   # Удаляем стандартные модели
+   admin.site.unregister(User)
+   admin.site.unregister(Group)
+   
+   # Регистрируем кастомного пользователя
+   @admin.register(User)
+   class CustomUserAdmin(UserAdmin):
+       list_display = ['username', 'email', 'is_active', 'date_joined']
+       list_filter = ['is_staff', 'is_active']
+   
+   # Регистрируем модели приложения
+   @admin.register(Category)
+   class CategoryAdmin(admin.ModelAdmin):
+       list_display = ['name', 'product_count']
+       search_fields = ['name']
+   
+   @admin.register(Product)
+   class ProductAdmin(admin.ModelAdmin):
+       list_display = ['name', 'category', 'price', 'in_stock']
+       list_filter = ['category', 'in_stock']
+       search_fields = ['name', 'description']
+       ordering = ['-created_at']
+   
    @admin.register(Order)
    class OrderAdmin(admin.ModelAdmin):
-       list_display = ('user', 'status', 'total_amount', 'created_at')
-       list_filter = ('status', 'created_at')
-       search_fields = ('user__username', 'shipping_address')
+       list_display = ['id', 'customer', 'total', 'status', 'created_at']
+       list_filter = ['status', 'created_at']
+       readonly_fields = ['created_at', 'updated_at']
 
-Настройка управления заказами
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**list_display:** Отображает пользователя, статус заказа, общую сумму и дату создания.
-
-**list_filter:** Двойной фильтр - по статусу заказа и дате создания.
-
-**search_fields:** Поиск по имени пользователя (через связь ``user__username``) и адресу доставки.
-
-Регистрация модели OrderItem
-----------------------------
-
-.. code-block:: python
-
-   # Register OrderItem
-   @admin.register(OrderItem)
-   class OrderItemAdmin(admin.ModelAdmin):
-       list_display = ('order', 'product', 'quantity', 'price')
-       list_filter = ('order',)
-
-Настройка элементов заказа
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-**list_display:** Показывает заказ, товар, количество и цену.
-
-**list_filter:** Фильтр по заказам для группировки элементов.
-
-Принципы организации админ-панели
----------------------------------
-
-**Логическая группировка:** Модели сгруппированы по функциональности:
-- Пользователи и аутентификация
-- Каталог товаров (Category, Product)
-- Корзина и заказы (CartItem, Order, OrderItem)
-
-**Оптимальная производительность:** Использование ``list_filter`` и ``search_fields`` улучшает пользовательский опыт при работе с большими объемами данных.
-
-**Безопасность:** Сохранены все стандартные проверки прав доступа Django.
-
-Доступ к админ-панели
----------------------
-
-После настройки административная панель доступна по адресу:
-``http://localhost:8000/admin/``
-
-Для доступа необходимо создать суперпользователя:
-
-.. code-block:: bash
-
-   python manage.py createsuperuser
-
-Рекомендации по улучшению
--------------------------
-
-**Inline администрирование:** Для моделей со связями можно использовать ``TabularInline`` или ``StackedInline``:
-
-.. code-block:: python
-
-   class OrderItemInline(admin.TabularInline):
-       model = OrderItem
-       extra = 1
-
-   class OrderAdmin(admin.ModelAdmin):
-       inlines = [OrderItemInline]
-
-**Кастомные действия:** Добавление массовых операций:
-
-.. code-block:: python
-
-   def make_confirmed(modeladmin, request, queryset):
-       queryset.update(status='confirmed')
-   make_confirmed.short_description = "Подтвердить выбранные заказы"
-
-   class OrderAdmin(admin.ModelAdmin):
-       actions = [make_confirmed]
-
-**Визуальные улучшения:** Использование ``list_display_links``, ``readonly_fields``, ``prepopulated_fields``.
-
-.. note::
-
-   Админ-панель Django автоматически обеспечивает проверку прав доступа based на роли пользователя (staff, superuser).
-
-.. warning::
-
-   Не забывайте выполнять миграции после добавления новых полей в модели: ``python manage.py makemigrations && python manage.py migrate``
+**Объяснение:** Полный пример демонстрирует организацию файла admin.py с удалением стандартных моделей, их кастомизацией и регистрацией моделей приложения с различными настройками.

@@ -1,0 +1,544 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Создание Sitemap.xml и robots.txt, Мета-Теги &mdash; документация Проект Django на русском 1.0.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=5d928502" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=e35015f7"></script>
+      <script src="_static/doctools.js?v=9a2dae69"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=9bfe3ffa"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="Работа с Git для локального репозитория" href="git.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Проект Django на русском
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <p class="caption" role="heading"><span class="caption-text">Пошаговое руководство:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Настройка окружения и установка Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="project-structure.html">Создание структуры проекта</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Создание моделей базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="templates.html">Создание HTML шаблонов</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Создание представлений (Views)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="urls.html">Настройка URL-маршрутов</a></li>
+<li class="toctree-l1"><a class="reference internal" href="git.html">Работа с Git для локального репозитория</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Создание Sitemap.xml и robots.txt, Мета-Теги</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sitemap-xml">Что такое Sitemap.xml?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id1">Как создать?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id2">Формат файла</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id3">Теги sitemap.xml</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loc"><code class="docutils literal notranslate"><span class="pre">&lt;loc&gt;</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#lastmod"><code class="docutils literal notranslate"><span class="pre">&lt;lastmod&gt;</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id4">Опциональные теги</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#changefreq"><code class="docutils literal notranslate"><span class="pre">&lt;changefreq&gt;</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#priority"><code class="docutils literal notranslate"><span class="pre">&lt;priority&gt;</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sitemap">Что включать в sitemap</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#robots-txt">Что такое robots.txt?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id5">Как создать?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#id6">Базовый синтаксис</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#user-agent">Директива User-agent</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#allow">Директива Allow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#disallow">Директива Disallow</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7">Директива Sitemap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#crawl-delay">Директива Crawl-delay</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id8">Примеры конфигураций</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id9">Что нужно запрещать</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10">Что не нужно запрещать</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id11">Назначение мета-тегов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#description">Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#keywords">Keywords</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#django">Реализация в Django</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id12">Базовый шаблон с мета-тегами</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13">Примеры для страниц системы заявок</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#id14">Лучшие практики</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id15">Для Description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id16">Для Keywords</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Проект Django на русском</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Создание Sitemap.xml и robots.txt, Мета-Теги</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="sitemap-xml-robots-txt">
+<h1>Создание Sitemap.xml и robots.txt, Мета-Теги<a class="headerlink" href="#sitemap-xml-robots-txt" title="Ссылка на этот заголовок"></a></h1>
+<section id="sitemap-xml">
+<h2>Что такое Sitemap.xml?<a class="headerlink" href="#sitemap-xml" title="Ссылка на этот заголовок"></a></h2>
+<p>Sitemap.xml - это файл карты сайта, который помогает поисковым системам:</p>
+<ul class="simple">
+<li><p>Находить все страницы вашего сайта</p></li>
+<li><p>Быстро индексировать новый контент</p></li>
+<li><p>Понимать структуру и важность страниц</p></li>
+<li><p>Отслеживать частоту обновлений</p></li>
+</ul>
+</section>
+<section id="id1">
+<h2>Как создать?<a class="headerlink" href="#id1" title="Ссылка на этот заголовок"></a></h2>
+<p>Как и для любой другой страницы нам нужен views, urls и сам шаблон. Они будут стандартными, т.к. никаких данных мы туда передавать не будем.</p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span><span class="x"># urls.py</span>
+<span class="x">path(&#39;sitemap.xml&#39;, views.sitemap_xml, name=&#39;sitemap&#39;)</span>
+
+<span class="x"># views.py</span>
+<span class="x">def sitemap_xml (request):</span>
+<span class="x"> return render(request, &#39;sitemap.xml&#39;, content_type=&#39;application/xml&#39;)</span>
+</pre></div>
+</div>
+<p>Не забываем создать сам файл sitemap.xml в директории templates и перейдя по пути <a class="reference external" href="http://127.0.0.1:8000/sitemap.xml">http://127.0.0.1:8000/sitemap.xml</a> найдем наш готовый файл.</p>
+</section>
+<section id="id2">
+<h2>Формат файла<a class="headerlink" href="#id2" title="Ссылка на этот заголовок"></a></h2>
+<p>Базовая структура sitemap.xml:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+    &lt;url&gt;
+        &lt;loc&gt;https://example.com/&lt;/loc&gt;
+        &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+        &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+        &lt;priority&gt;1.0&lt;/priority&gt;
+    &lt;/url&gt;
+&lt;/urlset&gt;
+</pre></div>
+</div>
+<p>Минимальная структура sitemap.xml:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+&lt;url&gt;
+    &lt;loc&gt;http://127.0.0.1:8000/&lt;/loc&gt;
+&lt;/url&gt;
+&lt;/urlset&gt;
+</pre></div>
+</div>
+</section>
+<section id="id3">
+<h2>Теги sitemap.xml<a class="headerlink" href="#id3" title="Ссылка на этот заголовок"></a></h2>
+<section id="loc">
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;loc&gt;</span></code><a class="headerlink" href="#loc" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>URL страницы</strong>
+Полный адрес страницы:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">loc</span><span class="o">&gt;</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">mysite</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">page</span><span class="o">/&lt;/</span><span class="n">loc</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="lastmod">
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;lastmod&gt;</span></code><a class="headerlink" href="#lastmod" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>Дата последнего изменения</strong>
+Формат ГГГГ-ММ-ДД:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">lastmod</span><span class="o">&gt;</span><span class="mi">2024</span><span class="o">-</span><span class="mi">01</span><span class="o">-</span><span class="mi">20</span><span class="o">&lt;/</span><span class="n">lastmod</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id4">
+<h2>Опциональные теги<a class="headerlink" href="#id4" title="Ссылка на этот заголовок"></a></h2>
+<section id="changefreq">
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;changefreq&gt;</span></code><a class="headerlink" href="#changefreq" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>Частота изменений:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">always</span></code> - постоянно меняется</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">hourly</span></code> - каждый час</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">daily</span></code> - ежедневно</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">weekly</span></code> - еженедельно</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">monthly</span></code> - ежемесячно</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">yearly</span></code> - ежегодно</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">never</span></code> - никогда не меняется</p></li>
+</ul>
+</section>
+<section id="priority">
+<h3><code class="docutils literal notranslate"><span class="pre">&lt;priority&gt;</span></code><a class="headerlink" href="#priority" title="Ссылка на этот заголовок"></a></h3>
+<p><strong>Приоритет страницы (0.0 - 1.0):</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code> - максимальный (главная страница)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0.9</span></code> - очень высокий</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0.8</span></code> - высокий (страницы товаров)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code> - средний</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0.3</span></code> - низкий</p></li>
+</ul>
+<p>Пример для сайта с заявками</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;&gt;
+&lt;url&gt;
+    &lt;loc&gt;http://127.0.0.1:8000/&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;daily&lt;/changefreq&gt;
+    &lt;priority&gt;1.0&lt;/priority&gt;
+&lt;/url&gt;
+&lt;url&gt;
+    &lt;loc&gt;http://127.0.0.1:8000/login&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;priority&gt;0.3&lt;/priority&gt;
+&lt;/url&gt;
+&lt;url&gt;
+    &lt;loc&gt;http://127.0.0.1:8000/register&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;monthly&lt;/changefreq&gt;
+    &lt;priority&gt;0.3&lt;/priority&gt;
+&lt;/url&gt;
+&lt;url&gt;
+    &lt;loc&gt;http://127.0.0.1:8000/applications&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;daily&lt;/changefreq&gt;
+    &lt;priority&gt;0.9&lt;/priority&gt;
+&lt;/url&gt;
+&lt;url&gt;
+    &lt;loc&gt;http://127.0.0.1:8000/applications/create&lt;/loc&gt;
+    &lt;lastmod&gt;2024-01-20&lt;/lastmod&gt;
+    &lt;changefreq&gt;weekly&lt;/changefreq&gt;
+    &lt;priority&gt;0.7&lt;/priority&gt;
+&lt;/url&gt;
+&lt;/urlset&gt;
+</pre></div>
+</div>
+</section>
+<section id="sitemap">
+<h3>Что включать в sitemap<a class="headerlink" href="#sitemap" title="Ссылка на этот заголовок"></a></h3>
+<p>✅ <strong>Включать:</strong></p>
+<ul class="simple">
+<li><p>Главная страница</p></li>
+<li><p>Страницы категорий</p></li>
+<li><p>Страницы товаров/услуг</p></li>
+<li><p>Информационные страницы</p></li>
+<li><p>Статьи и блог-посты</p></li>
+</ul>
+<p>❌ <strong>Не включать:</strong></p>
+<ul class="simple">
+<li><p>Страницы с параметрами фильтрации</p></li>
+<li><p>Страницы поиска</p></li>
+<li><p>Личные кабинеты пользователей</p></li>
+<li><p>Корзины покупок</p></li>
+<li><p>Административные разделы</p></li>
+</ul>
+</section>
+</section>
+<section id="robots-txt">
+<h2>Что такое robots.txt?<a class="headerlink" href="#robots-txt" title="Ссылка на этот заголовок"></a></h2>
+<p>Robots.txt - это файл с инструкциями для поисковых роботов (ботов), который указывает:</p>
+<ul class="simple">
+<li><p>Какие разделы сайта можно сканировать</p></li>
+<li><p>Какие разделы запрещены для индексации</p></li>
+<li><p>Где находится карта сайта (sitemap)</p></li>
+<li><p>Скорость обхода (crawl delay)</p></li>
+</ul>
+</section>
+<section id="id5">
+<h2>Как создать?<a class="headerlink" href="#id5" title="Ссылка на этот заголовок"></a></h2>
+<p>Также как и для sitemap.xml нам нужен views, urls и сам шаблон. Они будут стандартными, т.к. никаких данных мы туда передавать не будем.</p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span><span class="x"># urls.py</span>
+<span class="x">path(&#39;robots.txt&#39;, views.robots_txt, name=&#39;robots&#39;)</span>
+
+<span class="x"># views.py</span>
+<span class="x"> def robots_txt (request):</span>
+<span class="x">     return render(request, &#39;robots.txt&#39;, content_type=&#39;text/plain&#39;)</span>
+</pre></div>
+</div>
+<p>Не забываем создать сам файл sitemap.xml в директории templates и перейдя по пути <a class="reference external" href="http://127.0.0.1:8000/robots.txt">http://127.0.0.1:8000/robots.txt</a> найдем наш готовый файл.</p>
+</section>
+<section id="id6">
+<h2>Базовый синтаксис<a class="headerlink" href="#id6" title="Ссылка на этот заголовок"></a></h2>
+<section id="user-agent">
+<h3>Директива User-agent<a class="headerlink" href="#user-agent" title="Ссылка на этот заголовок"></a></h3>
+<p>Определяет, для каких роботов применяются правила:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">User</span><span class="o">-</span><span class="n">agent</span><span class="p">:</span> <span class="o">*</span>          <span class="c1"># Для всех роботов</span>
+<span class="n">User</span><span class="o">-</span><span class="n">agent</span><span class="p">:</span> <span class="n">Googlebot</span>  <span class="c1"># Только для Google</span>
+<span class="n">User</span><span class="o">-</span><span class="n">agent</span><span class="p">:</span> <span class="n">Yandex</span>     <span class="c1"># Только для Yandex</span>
+</pre></div>
+</div>
+</section>
+<section id="allow">
+<h3>Директива Allow<a class="headerlink" href="#allow" title="Ссылка на этот заголовок"></a></h3>
+<p>Разрешает доступ к указанным разделам:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Allow</span><span class="p">:</span> <span class="o">/</span>               <span class="c1"># Разрешить весь сайт</span>
+<span class="n">Allow</span><span class="p">:</span> <span class="o">/</span><span class="n">public</span><span class="o">/</span>        <span class="c1"># Разрешить только папку /public/</span>
+<span class="n">Allow</span><span class="p">:</span> <span class="o">*.</span><span class="n">html</span>          <span class="c1"># Разрешить HTML файлы</span>
+</pre></div>
+</div>
+</section>
+<section id="disallow">
+<h3>Директива Disallow<a class="headerlink" href="#disallow" title="Ссылка на этот заголовок"></a></h3>
+<p>Запрещает доступ к указанным разделам:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">admin</span><span class="o">/</span>      <span class="c1"># Запретить папку /admin/</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">private</span><span class="o">/</span>    <span class="c1"># Запретить папку /private/</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">search</span>      <span class="c1"># Запретить страницу поиска</span>
+</pre></div>
+</div>
+</section>
+<section id="id7">
+<h3>Директива Sitemap<a class="headerlink" href="#id7" title="Ссылка на этот заголовок"></a></h3>
+<p>Указывает расположение карты сайта:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Sitemap</span><span class="p">:</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">example</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">static</span><span class="o">/</span><span class="n">sitemap</span><span class="o">.</span><span class="n">xml</span>
+</pre></div>
+</div>
+</section>
+<section id="crawl-delay">
+<h3>Директива Crawl-delay<a class="headerlink" href="#crawl-delay" title="Ссылка на этот заголовок"></a></h3>
+<p>Устанавливает задержку между запросами (в секундах):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Crawl</span><span class="o">-</span><span class="n">delay</span><span class="p">:</span> <span class="mi">2</span>         <span class="c1"># Задержка 2 секунды</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id8">
+<h2>Примеры конфигураций<a class="headerlink" href="#id8" title="Ссылка на этот заголовок"></a></h2>
+<p>Минимальный пример</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">User</span><span class="o">-</span><span class="n">agent</span><span class="p">:</span> <span class="o">*</span>
+<span class="n">Allow</span><span class="p">:</span> <span class="o">/</span>
+<span class="n">Sitemap</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span><span class="n">sitemap</span><span class="o">.</span><span class="n">xml</span>
+</pre></div>
+</div>
+<p>Базовый пример с заявками:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">User</span><span class="o">-</span><span class="n">agent</span><span class="p">:</span> <span class="o">*</span>
+<span class="n">Allow</span><span class="p">:</span> <span class="o">/</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">admin</span><span class="o">/</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">private</span><span class="o">/</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">api</span><span class="o">/</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">profile</span><span class="o">/</span><span class="n">edit</span>
+<span class="n">Disallow</span><span class="p">:</span> <span class="o">/</span><span class="n">applications</span><span class="o">/</span><span class="n">create</span>
+
+<span class="n">Sitemap</span><span class="p">:</span> <span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="mf">127.0.0.1</span><span class="p">:</span><span class="mi">8000</span><span class="o">/</span><span class="n">sitemap</span><span class="o">.</span><span class="n">xml</span>
+</pre></div>
+</div>
+<section id="id9">
+<h3>Что нужно запрещать<a class="headerlink" href="#id9" title="Ссылка на этот заголовок"></a></h3>
+<ul class="simple">
+<li><p><strong>Административные панели</strong> - <code class="docutils literal notranslate"><span class="pre">/admin/</span></code>, <code class="docutils literal notranslate"><span class="pre">/backend/</span></code></p></li>
+<li><p><strong>Пользовательские данные</strong> - <code class="docutils literal notranslate"><span class="pre">/user/</span></code>, <code class="docutils literal notranslate"><span class="pre">/account/</span></code></p></li>
+<li><p><strong>Корзины покупок</strong> - <code class="docutils literal notranslate"><span class="pre">/cart/</span></code>, <code class="docutils literal notranslate"><span class="pre">/checkout/</span></code></p></li>
+<li><p><strong>Страницы поиска</strong> - <code class="docutils literal notranslate"><span class="pre">/search/</span></code>, <code class="docutils literal notranslate"><span class="pre">/find/</span></code></p></li>
+<li><p><strong>API endpoints</strong> - <code class="docutils literal notranslate"><span class="pre">/api/</span></code>, <code class="docutils literal notranslate"><span class="pre">/ajax/</span></code></p></li>
+<li><p><strong>Системные папки</strong> - <code class="docutils literal notranslate"><span class="pre">/tmp/</span></code>, <code class="docutils literal notranslate"><span class="pre">/cache/</span></code>, <code class="docutils literal notranslate"><span class="pre">/logs/</span></code></p></li>
+</ul>
+</section>
+<section id="id10">
+<h3>Что не нужно запрещать<a class="headerlink" href="#id10" title="Ссылка на этот заголовок"></a></h3>
+<ul class="simple">
+<li><p><strong>Главная страница</strong> - <code class="docutils literal notranslate"><span class="pre">/</span></code></p></li>
+<li><p><strong>Страницы категорий</strong> - <code class="docutils literal notranslate"><span class="pre">/books/</span></code>, <code class="docutils literal notranslate"><span class="pre">/categories/</span></code></p></li>
+<li><p><strong>Страницы товаров</strong> - <code class="docutils literal notranslate"><span class="pre">/product/</span></code>, <code class="docutils literal notranslate"><span class="pre">/item/</span></code></p></li>
+<li><p><strong>Статические ресурсы</strong> - CSS, JS, изображения</p></li>
+<li><p><strong>Информационные страницы</strong> - <code class="docutils literal notranslate"><span class="pre">/about/</span></code>, <code class="docutils literal notranslate"><span class="pre">/contact/</span></code></p></li>
+</ul>
+</section>
+</section>
+<section id="id11">
+<h2>Назначение мета-тегов<a class="headerlink" href="#id11" title="Ссылка на этот заголовок"></a></h2>
+<section id="description">
+<h3>Description<a class="headerlink" href="#description" title="Ссылка на этот заголовок"></a></h3>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;description&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;Система управления заявками&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Для чего</strong>: Краткое описание страницы для поисковых систем</p></li>
+<li><p><strong>Где виден</strong>: В сниппете поисковой выдачи под заголовком</p></li>
+<li><p><strong>Идеальная длина</strong>: 150-160 символов</p></li>
+<li><p><strong>Важность</strong>: Высокая - влияет на кликабельность в поиске</p></li>
+</ul>
+</section>
+<section id="keywords">
+<h3>Keywords<a class="headerlink" href="#keywords" title="Ссылка на этот заголовок"></a></h3>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;keywords&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;заявки, управление, тикеты&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+<ul class="simple">
+<li><p><strong>Для чего</strong>: Ключевые слова, relevantные для страницы</p></li>
+<li><p><strong>Где используется</strong>: Поисковыми системами для понимания тематики</p></li>
+<li><p><strong>Рекомендация</strong>: 5-10 релевантных слов через запятую</p></li>
+<li><p><strong>Важность</strong>: Средняя - меньше влияет на ранжирование, но полезна</p></li>
+</ul>
+</section>
+</section>
+<section id="django">
+<h2>Реализация в Django<a class="headerlink" href="#django" title="Ссылка на этот заголовок"></a></h2>
+<section id="id12">
+<h3>Базовый шаблон с мета-тегами<a class="headerlink" href="#id12" title="Ссылка на этот заголовок"></a></h3>
+<p>Используем файл <code class="docutils literal notranslate"><span class="pre">templates/base.html</span></code>:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&quot;ru&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&quot;UTF-8&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;viewport&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;width=device-width, initial-scale=1.0&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>{% block title %}Система заявок{% endblock %}<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;description&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;{% block description %}Система управления заявками. Создавайте и отслеживайте заявки онлайн.{% endblock %}&quot;</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;keywords&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;{% block keywords %}заявки, управление, тикеты, поддержка{% endblock %}&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    {% block content %}{% endblock %}
+<span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id13">
+<h3>Примеры для страниц системы заявок<a class="headerlink" href="#id13" title="Ссылка на этот заголовок"></a></h3>
+<p>Главная страница (templates/home.html):</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
+
+{% block title %}Главная - Система управления заявками{% endblock %}
+
+{% block description %}Эффективная система управления заявками и тикетами. Создавайте, отслеживайте и управляйте заявками в реальном времени. Удобный интерфейс для пользователей.{% endblock %}
+
+{% block keywords %}система заявок, управление тикетами, онлайн заявки, поддержка пользователей, создание заявок{% endblock %}
+
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Добро пожаловать в систему заявок<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+{% endblock %}
+</pre></div>
+</div>
+<p>Страница списка заявок (templates/applications/list.html):</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
+
+{% block title %}Мои заявки - Система заявок{% endblock %}
+
+{% block description %}Просмотр и управление вашими заявками. Отслеживайте статус выполнения, создавайте новые заявки и управляйте существующими обращениями в системе.{% endblock %}
+
+{% block keywords %}мои заявки, список заявок, управление заявками, статус заявок, история обращений{% endblock %}
+
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>Мои заявки<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="cm">&lt;!-- контент страницы --&gt;</span>
+{% endblock %}
+</pre></div>
+</div>
+<p>Страница деталей заявки (templates/applications/detail.html):</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
+
+{% block title %}{{ application.title }} - Детали заявки{% endblock %}
+
+{% block description %}Детальная информация о заявке &quot;{{ application.title }}&quot;. Текущий статус: {{ application.get_status_display }}. {% if application.description %}{{ application.description|truncatewords:20 }}{% endif %}{% endblock %}
+
+{% block keywords %}заявка {{ application.id }}, {{ application.title }}, детали заявки, статус {{ application.get_status_display }}{% endblock %}
+
+{% block content %}
+    <span class="p">&lt;</span><span class="nt">h1</span><span class="p">&gt;</span>{{ application.title }}<span class="p">&lt;/</span><span class="nt">h1</span><span class="p">&gt;</span>
+    <span class="cm">&lt;!-- контент страницы --&gt;</span>
+{% endblock %}
+</pre></div>
+</div>
+</section>
+</section>
+<section id="id14">
+<h2>Лучшие практики<a class="headerlink" href="#id14" title="Ссылка на этот заголовок"></a></h2>
+<section id="id15">
+<h3>Для Description<a class="headerlink" href="#id15" title="Ссылка на этот заголовок"></a></h3>
+<ul class="simple">
+<li><p>✅ <strong>Уникальность</strong>: Каждая страница должна иметь уникальный description</p></li>
+<li><p>✅ <strong>Релевантность</strong>: Описание должно соответствовать содержимому страницы</p></li>
+<li><p>✅ <strong>Естественность</strong>: Пишите для людей, а не для роботов</p></li>
+<li><p>✅ <strong>Призыв к действию</strong>: «Создайте заявку», «Отслеживайте статус»</p></li>
+<li><p>❌ <strong>Дублирование</strong>: Не повторяйте один и тот же текст на разных страницах</p></li>
+<li><p>❌ <strong>Спам</strong>: Не перегружайте ключевыми словами</p></li>
+</ul>
+<p>Пример хорошего description:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;description&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;Создавайте и отслеживайте заявки в реальном времени. Наша система управления заявками поможет быстро решить ваши вопросы. Удобный интерфейс и оперативная поддержка.&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+<section id="id16">
+<h3>Для Keywords<a class="headerlink" href="#id16" title="Ссылка на этот заголовок"></a></h3>
+<ul class="simple">
+<li><p>✅ <strong>Релевантность</strong>: Только те слова, которые действительно есть на странице</p></li>
+<li><p>✅ <strong>Естественность</strong>: Используйте нормальные словосочетания</p></li>
+<li><p>✅ <strong>Ограничение</strong>: 5-10 самых важных ключевых слов</p></li>
+<li><p>❌ <strong>Спам</strong>: Не добавляйте нерелевантные слова</p></li>
+<li><p>❌ <strong>Повторы</strong>: Не дублируйте одно и то же слово</p></li>
+</ul>
+<p>Пример хороших keywords:</p>
+<div class="highlight-html notranslate"><div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;keywords&quot;</span> <span class="na">content</span><span class="o">=</span><span class="s">&quot;создание заявки, отслеживание заявок, управление обращениями, техническая поддержка, статус заявки&quot;</span><span class="p">&gt;</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="git.html" class="btn btn-neutral float-left" title="Работа с Git для локального репозитория" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2025, Irsp-122. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
