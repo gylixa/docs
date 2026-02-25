@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+<meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Создание проекта &mdash; документация Проект Django на русском 1.0.0</title>
+<link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+<link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+<link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=fd3f3429" />
+<link rel="stylesheet" type="text/css" href="_static/custom.css?v=5d928502" />
+<script src="_static/jquery.js?v=5d32c60e"></script>
+<script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+<script src="_static/documentation_options.js?v=e35015f7"></script>
+<script src="_static/doctools.js?v=9a2dae69"></script>
+<script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+<script src="_static/translations.js?v=9bfe3ffa"></script>
+<script src="_static/js/theme.js"></script>
+<link rel="index" title="Алфавитный указатель" href="genindex.html" />
+<link rel="search" title="Поиск" href="search.html" />
+</head>
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+<nav data-toggle="wy-nav-shift" class="wy-nav-side">
+<div class="wy-side-scroll">
+<div class="wy-side-nav-search" >
+<a href="index.html" class="icon icon-home">
+Проект Django на русском
+</a>
+<div role="search">
+<form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+<input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+<input type="hidden" name="check_keywords" value="yes" />
+<input type="hidden" name="area" value="default" />
+</form>
+</div>
+</div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+<p class="caption" role="heading"><span class="caption-text">Пошаговое руководство:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="setup.html">Настройка окружения и установка Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="project-structure.html">Создание структуры проекта</a></li>
+<li class="toctree-l1"><a class="reference internal" href="models.html">Создание моделей базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="templates.html">Создание HTML шаблонов</a></li>
+<li class="toctree-l1"><a class="reference internal" href="views.html">Создание представлений (Views)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="urls.html">Настройка URL-маршрутов</a></li>
+<li class="toctree-l1"><a class="reference internal" href="forms.html">Формы в Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="admin.html">Админка Django (admin.py)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="git.html">Работа с Git для локального репозитория</a></li>
+<li class="toctree-l1"><a class="reference internal" href="seo.html">Создание Sitemap.xml и robots.txt, Мета-Теги</a></li>
+</ul>
+</div>
+</div>
+</nav>
+<section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+<i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+<a href="index.html">Проект Django на русском</a>
+</nav>
+<div class="wy-nav-content">
+<div class="rst-content">
+<div role="navigation" aria-label="Навигация по страницам">
+<ul class="wy-breadcrumbs">
+<li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+<li class="breadcrumb-item active">Создание проекта</li>
+<li class="wy-breadcrumbs-aside">
+</li>
+</ul>
+<hr/>
+</div>
+<div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+<div itemprop="articleBody">
+<section id="templates">
+<h1>templates<a class="headerlink" href="#templates" title="Ссылка на этот заголовок"></a></h1>
+<p>Теперь начинаем создавать шаблоны. В моем проекте используются 7 шаблонов и две страницы для seo-оптимизации. Описаны ниже:</p>
+
+<p><strong>base.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% load static %}
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ru&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;{% block title %}Корочки.есть{% endblock %}&lt;/title&gt;
+    &lt;meta name=&quot;description&quot; content=&quot;{% block description %}Онлайн курсы дополнительного профессионального образования{% endblock %}&quot;&gt;
+    &lt;meta name=&quot;keywords&quot; content=&quot;{% block keywords %}курсы, обучение, образование{% endblock %}&quot;&gt;
+    &lt;link href=&quot;{% static 'styles.css' %}&quot; rel=&quot;stylesheet&quot;&gt;
+    {% block extra_head %}{% endblock %}
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;nav class=&quot;navbar&quot;&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &lt;a href=&quot;{% url 'home' %}&quot; class=&quot;navbar-brand&quot;&gt;
+                &lt;i class=&quot;fas fa-graduation-cap&quot;&gt;&lt;/i&gt;
+                Корочки.есть
+            &lt;/a&gt;
+            &lt;div class=&quot;navbar-nav&quot;&gt;
+                {% if user.is_authenticated %}
+                    &lt;a href=&quot;{% url 'applications' %}&quot; class=&quot;nav-link&quot;&gt;Мои заявки&lt;/a&gt;
+                    &lt;a href=&quot;{% url 'create_application' %}&quot; class=&quot;nav-link&quot;&gt;Подать заявку&lt;/a&gt;
+                    {% if user.is_staff %}
+                        &lt;a href=&quot;/admin/&quot; class=&quot;nav-link&quot;&gt;Админка&lt;/a&gt;
+                    {% endif %}
+                    &lt;span class=&quot;nav-link user-menu&quot;&gt;
+                        &lt;div class=&quot;user-avatar&quot;&gt;{{ user.username|first|upper }}&lt;/div&gt;
+                        {{ user.username }}
+                    &lt;/span&gt;
+                    &lt;a href=&quot;{% url 'logout' %}&quot; class=&quot;nav-link nav-btn&quot;&gt;Выйти&lt;/a&gt;
+                {% else %}
+                    &lt;a href=&quot;{% url 'login' %}&quot; class=&quot;nav-link&quot;&gt;Войти&lt;/a&gt;
+                    &lt;a href=&quot;{% url 'register' %}&quot; class=&quot;nav-link nav-btn&quot;&gt;Регистрация&lt;/a&gt;
+                {% endif %}
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+
+    &lt;main class=&quot;main-content&quot;&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            {% block content %}{% endblock %}
+        &lt;/div&gt;
+    &lt;/main&gt;
+
+    &lt;footer class=&quot;footer&quot;&gt;
+        &lt;div class=&quot;container&quot;&gt;
+            &lt;div class=&quot;row&quot;&gt;
+                &lt;div class=&quot;col-md-4&quot;&gt;
+                    &lt;div class=&quot;footer-logo&quot;&gt;
+                        &lt;i class=&quot;fas fa-graduation-cap&quot;&gt;&lt;/i&gt;
+                        Корочки.есть
+                    &lt;/div&gt;
+                    &lt;p&gt;Онлайн курсы дополнительного профессионального образования&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-md-4&quot;&gt;
+                    &lt;h5&gt;Навигация&lt;/h5&gt;
+                    &lt;ul class=&quot;footer-links&quot;&gt;
+                        &lt;li&gt;&lt;a href=&quot;{% url 'home' %}&quot;&gt;Главная&lt;/a&gt;&lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;О нас&lt;/a&gt;&lt;/li&gt;
+                        &lt;li&gt;&lt;a href=&quot;#&quot;&gt;Контакты&lt;/a&gt;&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;col-md-4&quot;&gt;
+                    &lt;h5&gt;Контакты&lt;/h5&gt;
+                    &lt;ul class=&quot;footer-links&quot;&gt;
+                        &lt;li&gt;info@korochki.est&lt;/li&gt;
+                        &lt;li&gt;8 (800) 123-45-67&lt;/li&gt;
+                    &lt;/ul&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;footer-bottom&quot;&gt;
+                &lt;p&gt;© 2024 Корочки.есть. Все права защищены.&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+
+    {% block scripts %}{% endblock %}
+&lt;/body&gt;
+&lt;/html&gt;
+</pre></div></div>
+
+<p><strong>home.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Главная - Онлайн курсы Корочки.есть{% endblock %}
+
+{% block description %}
+Запишитесь на онлайн курсы программирования, веб-дизайна и баз данных. 
+Официальные документы, гибкий график, поддержка преподавателей. Начните обучение сегодня!
+{% endblock %}
+
+{% block keywords %}
+курсы, программирование, веб-дизайн, базы данных, обучение онлайн, 
+образование, диплом, сертификат, it курсы, программирование для начинающих
+{% endblock %}
+
+{% block content %}
+&lt;section class=&quot;hero-section&quot;&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;hero-content&quot;&gt;
+            &lt;span class=&quot;hero-badge&quot;&gt;Образование будущего&lt;/span&gt;
+            &lt;h1 class=&quot;hero-title&quot;&gt;Получи новую профессию онлайн&lt;/h1&gt;
+            &lt;p class=&quot;hero-description&quot;&gt;
+                Более 1000 студентов уже выбрали нас. Государственные документы, 
+                гибкий график, поддержка кураторов 24/7.
+            &lt;/p&gt;
+            &lt;div class=&quot;hero-buttons&quot;&gt;
+                {% if not user.is_authenticated %}
+                    &lt;a href=&quot;{% url 'register' %}&quot; class=&quot;btn btn-primary&quot;&gt;Начать обучение&lt;/a&gt;
+                    &lt;a href=&quot;{% url 'login' %}&quot; class=&quot;btn btn-outline&quot;&gt;Войти&lt;/a&gt;
+                {% else %}
+                    &lt;a href=&quot;{% url 'create_application' %}&quot; class=&quot;btn btn-primary&quot;&gt;Подать заявку на курс&lt;/a&gt;
+                    &lt;a href=&quot;{% url 'applications' %}&quot; class=&quot;btn btn-outline&quot;&gt;Мои заявки&lt;/a&gt;
+                {% endif %}
+            &lt;/div&gt;
+            &lt;div class=&quot;hero-stats&quot;&gt;
+                &lt;div class=&quot;stat-item&quot;&gt;
+                    &lt;span class=&quot;stat-number&quot;&gt;10+&lt;/span&gt;
+                    &lt;span class=&quot;stat-label&quot;&gt;курсов&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;stat-item&quot;&gt;
+                    &lt;span class=&quot;stat-number&quot;&gt;1000+&lt;/span&gt;
+                    &lt;span class=&quot;stat-label&quot;&gt;студентов&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;stat-item&quot;&gt;
+                    &lt;span class=&quot;stat-number&quot;&gt;100%&lt;/span&gt;
+                    &lt;span class=&quot;stat-label&quot;&gt;документы&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;courses-section&quot;&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;section-header&quot;&gt;
+            &lt;span class=&quot;section-subtitle&quot;&gt;Наши программы&lt;/span&gt;
+            &lt;h2 class=&quot;section-title&quot;&gt;Выберите свой путь&lt;/h2&gt;
+            &lt;p&gt;Современные программы, разработанные практикующими экспертами&lt;/p&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;course-cards-grid&quot;&gt;
+            &lt;div class=&quot;course-card&quot;&gt;
+                &lt;div class=&quot;course-icon&quot;&gt;
+                    &lt;i class=&quot;fas fa-code&quot;&gt;&lt;/i&gt;
+                &lt;/div&gt;
+                &lt;h3&gt;Основы алгоритмизации&lt;/h3&gt;
+                &lt;p&gt;Изучите основы программирования, алгоритмы и структуры данных с нуля&lt;/p&gt;
+                &lt;div class=&quot;course-meta&quot;&gt;
+                    &lt;span&gt;72 часа&lt;/span&gt;
+                    &lt;span&gt;234 студента&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;a href=&quot;#&quot; class=&quot;btn btn-outline btn-block&quot;&gt;Узнать больше&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;course-card&quot;&gt;
+                &lt;div class=&quot;course-icon&quot;&gt;
+                    &lt;i class=&quot;fas fa-paint-brush&quot;&gt;&lt;/i&gt;
+                &lt;/div&gt;
+                &lt;h3&gt;Веб-дизайн&lt;/h3&gt;
+                &lt;p&gt;Освойте создание современных веб-интерфейсов и UX/UI дизайн&lt;/p&gt;
+                &lt;div class=&quot;course-meta&quot;&gt;
+                    &lt;span&gt;64 часа&lt;/span&gt;
+                    &lt;span&gt;189 студентов&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;a href=&quot;#&quot; class=&quot;btn btn-outline btn-block&quot;&gt;Узнать больше&lt;/a&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;course-card&quot;&gt;
+                &lt;div class=&quot;course-icon&quot;&gt;
+                    &lt;i class=&quot;fas fa-database&quot;&gt;&lt;/i&gt;
+                &lt;/div&gt;
+                &lt;h3&gt;Базы данных&lt;/h3&gt;
+                &lt;p&gt;Научитесь проектировать и работать с базами данных, писать SQL&lt;/p&gt;
+                &lt;div class=&quot;course-meta&quot;&gt;
+                    &lt;span&gt;56 часов&lt;/span&gt;
+                    &lt;span&gt;156 студентов&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;a href=&quot;#&quot; class=&quot;btn btn-outline btn-block&quot;&gt;Узнать больше&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;section class=&quot;features-section&quot;&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;section-header&quot;&gt;
+            &lt;span class=&quot;section-subtitle&quot;&gt;Почему мы&lt;/span&gt;
+            &lt;h2 class=&quot;section-title&quot;&gt;Преимущества обучения&lt;/h2&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;course-cards-grid&quot;&gt;
+            &lt;div class=&quot;feature-card&quot;&gt;
+                &lt;i class=&quot;fas fa-certificate&quot;&gt;&lt;/i&gt;
+                &lt;h4&gt;Официальные документы&lt;/h4&gt;
+                &lt;p&gt;Дипломы и сертификаты государственного образца&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;feature-card&quot;&gt;
+                &lt;i class=&quot;fas fa-clock&quot;&gt;&lt;/i&gt;
+                &lt;h4&gt;Гибкий график&lt;/h4&gt;
+                &lt;p&gt;Учитесь в удобное время, совмещайте с работой&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;feature-card&quot;&gt;
+                &lt;i class=&quot;fas fa-headset&quot;&gt;&lt;/i&gt;
+                &lt;h4&gt;Поддержка 24/7&lt;/h4&gt;
+                &lt;p&gt;Кураторы и преподаватели всегда на связи&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;feature-card&quot;&gt;
+                &lt;i class=&quot;fas fa-briefcase&quot;&gt;&lt;/i&gt;
+                &lt;h4&gt;Практические задания&lt;/h4&gt;
+                &lt;p&gt;Реальные проекты для портфолио&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/section&gt;
+{% endblock %}
+</pre></div></div>
+
+<p><strong>login.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Вход в личный кабинет - Корочки.есть{% endblock %}
+
+{% block description %}
+Войдите в свой аккаунт на портале Корочки.есть для доступа к заявкам, курсам и личному кабинету.
+{% endblock %}
+
+{% block keywords %}
+вход в личный кабинет, авторизация, войти на сайт, логин, доступ к курсам
+{% endblock %}
+
+{% block content %}
+&lt;div class=&quot;auth-page&quot;&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;auth-wrapper&quot;&gt;
+            &lt;div class=&quot;auth-card&quot;&gt;
+                &lt;div class=&quot;auth-header&quot;&gt;
+                    &lt;div class=&quot;auth-icon&quot;&gt;
+                        &lt;i class=&quot;fas fa-sign-in-alt&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                    &lt;h2&gt;Добро пожаловать!&lt;/h2&gt;
+                    &lt;p&gt;Войдите в свой аккаунт&lt;/p&gt;
+                &lt;/div&gt;
+
+                {% if messages %}
+                    {% for message in messages %}
+                        &lt;div class=&quot;alert alert-{{ message.tags }}&quot;&gt;
+                            {{ message }}
+                        &lt;/div&gt;
+                    {% endfor %}
+                {% endif %}
+
+                &lt;form method=&quot;post&quot;&gt;
+                    {% csrf_token %}
+                    
+                    &lt;div class=&quot;form-group&quot;&gt;
+                        &lt;label for=&quot;username&quot; class=&quot;form-label&quot;&gt;
+                            &lt;i class=&quot;fas fa-user&quot;&gt;&lt;/i&gt;
+                            Логин
+                        &lt;/label&gt;
+                        &lt;input type=&quot;text&quot; name=&quot;username&quot; id=&quot;username&quot; class=&quot;form-control&quot; required&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class=&quot;form-group&quot;&gt;
+                        &lt;label for=&quot;password&quot; class=&quot;form-label&quot;&gt;
+                            &lt;i class=&quot;fas fa-lock&quot;&gt;&lt;/i&gt;
+                            Пароль
+                        &lt;/label&gt;
+                        &lt;input type=&quot;password&quot; name=&quot;password&quot; id=&quot;password&quot; class=&quot;form-control&quot; required&gt;
+                    &lt;/div&gt;
+
+                    &lt;div class=&quot;form-group&quot;&gt;
+                        &lt;label class=&quot;checkbox-label&quot;&gt;
+                            &lt;input type=&quot;checkbox&quot; name=&quot;remember&quot;&gt;
+                            Запомнить меня
+                        &lt;/label&gt;
+                    &lt;/div&gt;
+
+                    &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary btn-block&quot;&gt;Войти&lt;/button&gt;
+                    
+                    &lt;p class=&quot;text-center mt-3&quot;&gt;
+                        &lt;a href=&quot;#&quot;&gt;Забыли пароль?&lt;/a&gt;
+                    &lt;/p&gt;
+                &lt;/form&gt;
+
+                &lt;div class=&quot;auth-footer&quot;&gt;
+                    &lt;p&gt;Ещё нет аккаунта?&lt;/p&gt;
+                    &lt;a href=&quot;{% url 'register' %}&quot; class=&quot;btn btn-outline btn-block&quot;&gt;Создать аккаунт&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class=&quot;auth-features&quot;&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-certificate&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Официальные документы&lt;/h4&gt;
+                    &lt;p&gt;Получите диплом государственного образца&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-clock&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Гибкий график&lt;/h4&gt;
+                    &lt;p&gt;Учитесь в удобное для вас время&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-headset&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Поддержка 24/7&lt;/h4&gt;
+                    &lt;p&gt;Кураторы всегда на связи&lt;/p&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}
+</pre></div></div>
+
+<p><strong>register.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Регистрация на портале - Корочки.есть{% endblock %}
+
+{% block description %}
+Создайте аккаунт на образовательном портале Корочки.есть. Доступ к онлайн курсам, личный кабинет, управление заявками.
+{% endblock %}
+
+{% block keywords %}
+регистрация, создать аккаунт, запись на курсы, новая учетная запись, студент
+{% endblock %}
+
+{% block content %}
+&lt;div class=&quot;auth-page&quot;&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;auth-wrapper&quot;&gt;
+            &lt;div class=&quot;auth-card&quot;&gt;
+                &lt;div class=&quot;auth-header&quot;&gt;
+                    &lt;div class=&quot;auth-icon&quot;&gt;
+                        &lt;i class=&quot;fas fa-user-plus&quot;&gt;&lt;/i&gt;
+                    &lt;/div&gt;
+                    &lt;h2&gt;Начните обучение&lt;/h2&gt;
+                    &lt;p&gt;Создайте аккаунт за 1 минуту&lt;/p&gt;
+                &lt;/div&gt;
+
+                &lt;form method=&quot;post&quot;&gt;
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                        &lt;div class=&quot;form-group&quot;&gt;
+                            &lt;label for=&quot;{{ field.id_for_label }}&quot; class=&quot;form-label&quot;&gt;
+                                {% if field.name == 'username' %}
+                                    &lt;i class=&quot;fas fa-user&quot;&gt;&lt;/i&gt;
+                                {% elif field.name == 'fio' %}
+                                    &lt;i class=&quot;fas fa-id-card&quot;&gt;&lt;/i&gt;
+                                {% elif field.name == 'phone' %}
+                                    &lt;i class=&quot;fas fa-phone&quot;&gt;&lt;/i&gt;
+                                {% elif field.name == 'email' %}
+                                    &lt;i class=&quot;fas fa-envelope&quot;&gt;&lt;/i&gt;
+                                {% elif 'password' in field.name %}
+                                    &lt;i class=&quot;fas fa-lock&quot;&gt;&lt;/i&gt;
+                                {% endif %}
+                                {{ field.label }}
+                            &lt;/label&gt;
+                            
+                            {{ field }}
+                            
+                            {% if field.help_text %}
+                                &lt;small class=&quot;form-text&quot;&gt;{{ field.help_text }}&lt;/small&gt;
+                            {% endif %}
+                            
+                            {% if field.errors %}
+                                {% for error in field.errors %}
+                                    &lt;div class=&quot;error-message&quot;&gt;{{ error }}&lt;/div&gt;
+                                {% endfor %}
+                            {% endif %}
+                        &lt;/div&gt;
+                    {% endfor %}
+
+                    &lt;div class=&quot;form-group&quot;&gt;
+                        &lt;label class=&quot;checkbox-label&quot;&gt;
+                            &lt;input type=&quot;checkbox&quot; required&gt;
+                            Я согласен с &lt;a href=&quot;#&quot;&gt;условиями использования&lt;/a&gt; и &lt;a href=&quot;#&quot;&gt;политикой конфиденциальности&lt;/a&gt;
+                        &lt;/label&gt;
+                    &lt;/div&gt;
+
+                    &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary btn-block&quot;&gt;Создать пользователя&lt;/button&gt;
+                &lt;/form&gt;
+
+                &lt;div class=&quot;auth-footer&quot;&gt;
+                    &lt;p&gt;Уже есть аккаунт?&lt;/p&gt;
+                    &lt;a href=&quot;{% url 'login' %}&quot; class=&quot;btn btn-outline btn-block&quot;&gt;Войти в систему&lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class=&quot;auth-features&quot;&gt;
+                &lt;h3&gt;После регистрации вы получите:&lt;/h3&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-book&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Доступ ко всем курсам&lt;/h4&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-user-circle&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Личный кабинет студента&lt;/h4&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-clipboard-list&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Управление заявками&lt;/h4&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-history&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;История обучения&lt;/h4&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;feature-item&quot;&gt;
+                    &lt;i class=&quot;fas fa-chart-line&quot;&gt;&lt;/i&gt;
+                    &lt;h4&gt;Отслеживание прогресса&lt;/h4&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}
+
+{% block scripts %}
+&lt;script&gt;
+// Маска для телефона в формате 8(XXX)XXX-XX-XX
+document.getElementById('phone-input')?.addEventListener('input', function(e) {
+    let x = e.target.value.replace(/\D/g, '').match(/(\d{0,1})(\d{0,3})(\d{0,3})(\d{0,2})(\d{0,2})/);
+    e.target.value = !x[2] ? x[1] : x[1] + '(' + x[2] + (x[3] ? ')' + x[3] : '') + (x[4] ? '-' + x[4] : '') + (x[5] ? '-' + x[5] : '');
+});
+&lt;/script&gt;
+{% endblock %}
+</pre></div></div>
+
+<p><strong>applications.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мои заявки на обучение - Корочки.есть{% endblock %}
+
+{% block description %}
+Управляйте своими заявками на курсы. Просмотр статусов, добавление отзывов, 
+история обучения на портале Корочки.есть.
+{% endblock %}
+
+{% block keywords %}
+заявки на обучение, статус заявки, отзывы о курсах, мои курсы, личный кабинет студента
+{% endblock %}
+
+{% block content %}
+&lt;div class=&quot;dashboard-header&quot;&gt;
+    &lt;div class=&quot;container&quot;&gt;
+        &lt;div class=&quot;dashboard-header-content&quot;&gt;
+            &lt;div&gt;
+                &lt;h1&gt;Мои заявки&lt;/h1&gt;
+                &lt;p&gt;Управляйте своими заявками на обучение&lt;/p&gt;
+            &lt;/div&gt;
+            &lt;a href=&quot;{% url 'create_application' %}&quot; class=&quot;btn btn-primary&quot;&gt;
+                &lt;i class=&quot;fas fa-plus&quot;&gt;&lt;/i&gt;
+                Новая заявка
+            &lt;/a&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class=&quot;container&quot;&gt;
+    {% if applications %}
+    &lt;div class=&quot;stats-grid&quot;&gt;
+        &lt;div class=&quot;stat-card&quot;&gt;
+            &lt;div class=&quot;stat-icon blue&quot;&gt;
+                &lt;i class=&quot;fas fa-clipboard-list&quot;&gt;&lt;/i&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;div class=&quot;stat-value&quot;&gt;{{ applications.count }}&lt;/div&gt;
+                &lt;div class=&quot;stat-label&quot;&gt;Всего заявок&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;stat-card&quot;&gt;
+            &lt;div class=&quot;stat-icon green&quot;&gt;
+                &lt;i class=&quot;fas fa-check-circle&quot;&gt;&lt;/i&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;div class=&quot;stat-value&quot;&gt;{{ applications|length }}&lt;/div&gt;
+                &lt;div class=&quot;stat-label&quot;&gt;Завершено&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;stat-card&quot;&gt;
+            &lt;div class=&quot;stat-icon&quot;&gt;
+                &lt;i class=&quot;fas fa-clock&quot;&gt;&lt;/i&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+                &lt;div class=&quot;stat-value&quot;&gt;0&lt;/div&gt;
+                &lt;div class=&quot;stat-label&quot;&gt;В процессе&lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;filters-bar&quot;&gt;
+        &lt;div class=&quot;filter-tabs&quot;&gt;
+            &lt;button class=&quot;filter-tab active&quot;&gt;Все&lt;/button&gt;
+            &lt;button class=&quot;filter-tab&quot;&gt;Новые&lt;/button&gt;
+            &lt;button class=&quot;filter-tab&quot;&gt;В процессе&lt;/button&gt;
+            &lt;button class=&quot;filter-tab&quot;&gt;Завершенные&lt;/button&gt;
+        &lt;/div&gt;
+        &lt;div class=&quot;search-box&quot;&gt;
+            &lt;i class=&quot;fas fa-search&quot;&gt;&lt;/i&gt;
+            &lt;input type=&quot;text&quot; placeholder=&quot;Поиск заявок...&quot;&gt;
+        &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;div class=&quot;applications-grid&quot;&gt;
+        {% for application in applications %}
+        &lt;div class=&quot;application-card&quot;&gt;
+            &lt;div class=&quot;application-header&quot;&gt;
+                &lt;h4&gt;{{ application.get_course_display }}&lt;/h4&gt;
+                &lt;span class=&quot;status-badge 
+                    {% if application.status == 'new' %}status-new
+                    {% elif application.status == 'in_progress' %}status-progress
+                    {% else %}status-completed{% endif %}&quot;&gt;
+                    {{ application.get_status_display }}
+                &lt;/span&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;application-body&quot;&gt;
+                &lt;div class=&quot;info-row&quot;&gt;
+                    &lt;span class=&quot;info-label&quot;&gt;Дата создания:&lt;/span&gt;
+                    &lt;span&gt;{{ application.created_at|date:&quot;d M Y&quot; }}&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;info-row&quot;&gt;
+                    &lt;span class=&quot;info-label&quot;&gt;Дата начала:&lt;/span&gt;
+                    &lt;span&gt;{{ application.desired_start_date|date:&quot;d.m.Y&quot; }}&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;div class=&quot;info-row&quot;&gt;
+                    &lt;span class=&quot;info-label&quot;&gt;Способ оплаты:&lt;/span&gt;
+                    &lt;span&gt;{{ application.get_payment_method_display }}&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            {% if application.status == 'completed' %}
+            &lt;div class=&quot;application-footer&quot;&gt;
+                {% if application.review %}
+                    &lt;div class=&quot;review-preview&quot;&gt;
+                        &lt;div class=&quot;rating&quot;&gt;
+                            {% for i in &quot;12345&quot;|make_list %}
+                                &lt;i class=&quot;fas fa-star{% if forloop.counter &lt;= application.review.rating %} active{% endif %}&quot;&gt;&lt;/i&gt;
+                            {% endfor %}
+                        &lt;/div&gt;
+                        &lt;p&gt;{{ application.review.text|truncatechars:100 }}&lt;/p&gt;
+                    &lt;/div&gt;
+                {% else %}
+                    &lt;a href=&quot;{% url 'add_review' application.id %}&quot; class=&quot;btn btn-review&quot;&gt;
+                        &lt;i class=&quot;fas fa-pen&quot;&gt;&lt;/i&gt;
+                        Оставить отзыв
+                    &lt;/a&gt;
+                {% endif %}
+            &lt;/div&gt;
+            {% endif %}
+        &lt;/div&gt;
+        {% endfor %}
+    &lt;/div&gt;
+
+    {% else %}
+    &lt;div class=&quot;empty-state&quot;&gt;
+        &lt;div class=&quot;empty-state-icon&quot;&gt;
+            &lt;i class=&quot;fas fa-clipboard-list&quot;&gt;&lt;/i&gt;
+        &lt;/div&gt;
+        &lt;h3&gt;У вас пока нет заявок&lt;/h3&gt;
+        &lt;p&gt;Подайте первую заявку на обучение и начните свой путь к новой профессии&lt;/p&gt;
+        &lt;a href=&quot;{% url 'create_application' %}&quot; class=&quot;btn btn-primary&quot;&gt;Подать заявку&lt;/a&gt;
+    &lt;/div&gt;
+    {% endif %}
+&lt;/div&gt;
+{% endblock %}
+
+{% block scripts %}
+&lt;script&gt;
+// Фильтрация заявок
+document.querySelectorAll('.filter-tab').forEach(tab => {
+    tab.addEventListener('click', function() {
+        document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
+&lt;/script&gt;
+{% endblock %}
+</pre></div></div>
+
+<p><strong>create_application.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Подача заявки - Корочки.есть{% endblock %}
+{% block description %}Подайте заявку на онлайн курс обучения{% endblock %}
+{% block keywords %}заявка, курс, обучение, подать{% endblock %}
+
+{% block content %}
+&lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;auth-card&quot; style=&quot;max-width: 600px; margin: 2rem auto;&quot;&gt;
+        &lt;div class=&quot;auth-header&quot;&gt;
+            &lt;h2&gt;Подача заявки на курс&lt;/h2&gt;
+            &lt;p&gt;Заполните форму для записи на обучение&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;form method=&quot;post&quot;&gt;
+            {% csrf_token %}
+
+            {% for field in form %}
+                &lt;div class=&quot;form-group&quot;&gt;
+                    &lt;label for=&quot;{{ field.id_for_label }}&quot; class=&quot;form-label&quot;&gt;
+                        {{ field.label }}
+                    &lt;/label&gt;
+                    {{ field }}
+                    {% if field.help_text %}
+                        &lt;small class=&quot;form-text&quot;&gt;{{ field.help_text }}&lt;/small&gt;
+                    {% endif %}
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            &lt;div class=&quot;error-message&quot;&gt;{{ error }}&lt;/div&gt;
+                        {% endfor %}
+                    {% endif %}
+                &lt;/div&gt;
+            {% endfor %}
+
+            &lt;div class=&quot;form-navigation&quot;&gt;
+                &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Отправить&lt;/button&gt;
+                &lt;a href=&quot;{% url 'applications' %}&quot; class=&quot;btn btn-outline&quot;&gt;Отмена&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}
+</pre></div></div>
+
+<p><strong>add_review.html:</strong></p>
+<div class="highlight-django notranslate"><div class="highlight"><pre><span></span>{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Оставить отзыв о курсе - Корочки.есть{% endblock %}
+
+{% block description %}
+Поделитесь своим опытом обучения. Оставьте отзыв о пройденном курсе и помогите другим студентам сделать выбор.
+{% endblock %}
+
+{% block keywords %}
+отзыв о курсе, оценка обучения, мнение о курсах, отзывы студентов, рейтинг курсов
+{% endblock %}
+
+{% block content %}
+&lt;div class=&quot;container&quot;&gt;
+    &lt;div class=&quot;auth-card&quot; style=&quot;max-width: 600px; margin: 2rem auto;&quot;&gt;
+        &lt;div class=&quot;auth-header&quot;&gt;
+            &lt;h2&gt;Оставить отзыв&lt;/h2&gt;
+            &lt;p&gt;Поделитесь своими впечатлениями о курсе&lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;div class=&quot;course-info-card&quot;&gt;
+            &lt;div class=&quot;course-info-icon&quot;&gt;
+                &lt;i class=&quot;fas fa-graduation-cap&quot;&gt;&lt;/i&gt;
+            &lt;/div&gt;
+            &lt;div class=&quot;course-info-details&quot;&gt;
+                &lt;h4&gt;Информация о курсе&lt;/h4&gt;
+                &lt;p&gt;&lt;strong&gt;Курс:&lt;/strong&gt; {{ application.course }}&lt;/p&gt;
+                &lt;p&gt;&lt;strong&gt;Дата начала:&lt;/strong&gt; {{ application.desired_start_date|date:&quot;d.m.Y&quot; }}&lt;/p&gt;
+                &lt;p&gt;&lt;strong&gt;Способ оплаты:&lt;/strong&gt; {{ application.get_payment_method_display }}&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;form method=&quot;post&quot;&gt;
+            {% csrf_token %}
+
+            {% for field in form %}
+                &lt;div class=&quot;form-group&quot;&gt;
+                    &lt;label for=&quot;{{ field.id_for_label }}&quot; class=&quot;form-label&quot;&gt;
+                        {{ field.label }}
+                    &lt;/label&gt;
+                    
+                    {% if field.name == 'rating' %}
+                        &lt;div class=&quot;rating-input&quot;&gt;
+                            {% for i in &quot;12345&quot;|make_list %}
+                                &lt;label class=&quot;rating-star&quot;&gt;
+                                    &lt;input type=&quot;radio&quot; name=&quot;rating&quot; value=&quot;{{ forloop.counter }}&quot; required&gt;
+                                    &lt;i class=&quot;fas fa-star&quot;&gt;&lt;/i&gt;
+                                &lt;/label&gt;
+                            {% endfor %}
+                        &lt;/div&gt;
+                    {% else %}
+                        {{ field }}
+                    {% endif %}
+                    
+                    {% if field.help_text %}
+                        &lt;small class=&quot;form-text&quot;&gt;{{ field.help_text }}&lt;/small&gt;
+                    {% endif %}
+                    
+                    {% if field.errors %}
+                        {% for error in field.errors %}
+                            &lt;div class=&quot;error-message&quot;&gt;{{ error }}&lt;/div&gt;
+                        {% endfor %}
+                    {% endif %}
+                &lt;/div&gt;
+            {% endfor %}
+
+            &lt;div class=&quot;form-navigation&quot;&gt;
+                &lt;button type=&quot;submit&quot; class=&quot;btn btn-primary&quot;&gt;Опубликовать отзыв&lt;/button&gt;
+                &lt;a href=&quot;{% url 'applications' %}&quot; class=&quot;btn btn-outline&quot;&gt;Отмена&lt;/a&gt;
+            &lt;/div&gt;
+        &lt;/form&gt;
+    &lt;/div&gt;
+&lt;/div&gt;
+{% endblock %}
+
+{% block scripts %}
+&lt;script&gt;
+// Интерактивные звёзды рейтинга
+document.querySelectorAll('.rating-star').forEach(star => {
+    star.addEventListener('click', function() {
+        document.querySelectorAll('.rating-star').forEach(s => s.classList.remove('active'));
+        this.classList.add('active');
+        this.previousElementSibling?.checked = true;
+    });
+});
+&lt;/script&gt;
+{% endblock %}
+</pre></div></div>
+
+<p><strong>robots.txt:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /logout/
+Disallow: /private/
+Disallow: /api/
+# Основное зеркало
+Host: https://korochki.est
+# Карта сайта
+Sitemap: https://korochki.est/sitemap.xml
+# Задержка для поисковых роботов
+Crawl-delay: 5
+#
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 2
+User-agent: Yandex
+Allow: /
+Crawl-delay: 2
+</pre></div></div>
+
+<p><strong>sitemap.xml:</strong></p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span>&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;urlset xmlns=&quot;http://www.sitemaps.org/schemas/sitemap/0.9&quot;
+xmlns:xhtml=&quot;http://www.w3.org/1999/xhtml&quot;&gt;
+&lt;!-- Главная страница --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;daily&lt;/changefreq&gt;
+&lt;priority&gt;1.0&lt;/priority&gt;
+&lt;/url&gt;
+&lt;!-- О нас (если есть) --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/about/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;monthly&lt;/changefreq&gt;
+&lt;priority&gt;0.5&lt;/priority&gt;
+&lt;/url&gt;
+&lt;!-- Контакты --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/contact/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;yearly&lt;/changefreq&gt;
+&lt;priority&gt;0.5&lt;/priority&gt;
+&lt;/url&gt;
+&lt;!-- Регистрация --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/register/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;monthly&lt;/changefreq&gt;
+&lt;priority&gt;0.8&lt;/priority&gt;
+&lt;/url&gt;
+&lt;!-- Вход --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/login/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;monthly&lt;/changefreq&gt;
+&lt;priority&gt;0.7&lt;/priority&gt;
+&lt;/url&gt;
+&lt;!-- Заявки (только для авторизованных, но в sitemap включаем) --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/applications/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;weekly&lt;/changefreq&gt;
+&lt;priority&gt;0.6&lt;/priority&gt;
+&lt;/url&gt;
+&lt;!-- Создание заявки --&gt;
+&lt;url&gt;
+&lt;loc&gt;https://korochki.est/applications/create/&lt;/loc&gt;
+&lt;lastmod&gt;2024-01-15&lt;/lastmod&gt;
+&lt;changefreq&gt;weekly&lt;/changefreq&gt;
+&lt;priority&gt;0.8&lt;/priority&gt;
+&lt;/url&gt;
+&lt;/urlset&gt;
+</pre></div></div>
+
+<p><strong>styles.css:</strong></p>
+<div class="highlight-css notranslate"><div class="highlight"><pre><span></span>/* ======================================== /
+/ ··· ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ··· /
+/ ======================================== /
+:root {
+/* Основная палитра - меняйте здесь */
+--primary: #4361ee;
+--primary-dark: #3a56d4;
+--primary-light: #e8edff;
+--secondary: #06d6a0;
+--accent: #ffd166;
+/* Нейтральные тона */
+--bg-body: #f5f7fc;
+--bg-card: #ffffff;
+--text-primary: #1e293b;
+--text-secondary: #475569;
+--text-muted: #64748b;
+--border-color: #e2e8f0;
+--border-light: #f1f5f9;
+
+/* UI элементы */
+--border-radius-md: 12px;
+--border-radius-lg: 16px;
+--border-radius-full: 9999px;
+--box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+--box-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+
+/* Шрифты */
+--font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+}
+/* ======================================== /
+/ ··· БАЗОВЫЕ СТИЛИ ··· /
+/ ======================================== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+background: var(--bg-body);
+font-family: var(--font-sans);
+color: var(--text-primary);
+line-height: 1.6;
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+}
+.main-content { flex: 1; padding: 2rem 0; }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 1.5rem; }
+h1, h2, h3 { font-weight: 700; color: var(--text-primary); }
+h1 { font-size: 2.5rem; } h2 { font-size: 2rem; } h3 { font-size: 1.5rem; }
+p { color: var(--text-secondary); }
+.gradient-text {
+background: linear-gradient(135deg, var(--primary), var(--secondary));
+-webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+/* ======================================== /
+/ ··· НАВИГАЦИЯ ··· /
+/ ======================================== */
+.navbar {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+padding: 0.75rem 0;
+box-shadow: var(--box-shadow);
+position: sticky; top: 0; z-index: 1000;
+}
+.navbar .container { display: flex; align-items: center; justify-content: space-between; }
+.navbar-brand {
+display: flex; align-items: center; gap: 0.5rem;
+font-size: 1.5rem; font-weight: 800; color: white !important;
+}
+.navbar-brand i { font-size: 2rem; color: var(--accent); }
+.navbar-nav { display: flex; align-items: center; gap: 0.5rem; }
+.nav-link {
+color: rgba(255,255,255,0.9) !important; font-weight: 500;
+padding: 0.5rem 1rem !important; border-radius: var(--border-radius-full);
+display: flex; align-items: center; gap: 0.5rem;
+}
+.nav-link:hover { background: rgba(255,255,255,0.15); color: white !important; }
+.user-menu { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); }
+.user-avatar {
+width: 32px; height: 32px; background: var(--accent);
+border-radius: var(--border-radius-full); display: flex; align-items: center; justify-content: center;
+}
+.nav-btn { background: white !important; color: var(--primary) !important; }
+/* ======================================== /
+/ ··· КНОПКИ ··· /
+/ ======================================== */
+.btn {
+display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem;
+padding: 0.6rem 1.5rem; font-weight: 500; border-radius: var(--border-radius-full);
+transition: all 0.25s ease; border: none; cursor: pointer; text-decoration: none;
+}
+.btn-primary {
+background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+color: white !important; box-shadow: 0 4px 12px rgba(67,97,238,0.3);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(67,97,238,0.4); }
+.btn-outline {
+background: transparent; color: var(--text-primary) !important;
+border: 2px solid var(--border-color);
+}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary) !important; }
+.btn-block { width: 100%; }
+/* ======================================== /
+/ ··· КАРТОЧКИ ··· /
+/ ======================================== */
+.card {
+background: var(--bg-card); border-radius: var(--border-radius-lg);
+box-shadow: var(--box-shadow); overflow: hidden; transition: all 0.25s ease;
+border: 1px solid var(--border-light);
+}
+.card:hover { transform: translateY(-4px); box-shadow: var(--box-shadow-hover); }
+.card-body { padding: 1.5rem; }
+.card-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1rem; }
+/* ======================================== /
+/ ··· ФОРМЫ ··· /
+/ ======================================== */
+.form-group { margin-bottom: 1.5rem; }
+.form-label {
+display: flex; align-items: center; gap: 0.5rem; font-weight: 600;
+color: var(--text-primary); margin-bottom: 0.5rem;
+}
+.form-control {
+width: 100%; padding: 0.75rem 1rem; border: 2px solid var(--border-color);
+border-radius: var(--border-radius-md); font-size: 1rem;
+transition: all 0.25s ease; background: var(--bg-card);
+}
+.form-control:focus {
+outline: none; border-color: var(--primary);
+box-shadow: 0 0 0 4px var(--primary-light);
+}
+.form-text { font-size: 0.875rem; color: var(--text-muted); }
+.error-message { color: #ef4444; font-size: 0.875rem; }
+/* ======================================== /
+/ ··· АВТОРИЗАЦИЯ ··· /
+/ ======================================== */
+.auth-page { min-height: calc(100vh - 200px); display: flex; align-items: center; }
+.auth-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.auth-card { background: var(--bg-card); border-radius: var(--border-radius-lg); padding: 2rem; box-shadow: var(--box-shadow); }
+.auth-header { text-align: center; margin-bottom: 2rem; }
+.auth-icon {
+width: 80px; height: 80px; background: var(--primary-light);
+border-radius: var(--border-radius-full); display: flex; align-items: center; justify-content: center;
+margin: 0 auto 1rem;
+}
+.auth-icon i { font-size: 2.5rem; color: var(--primary); }
+.checkbox-label { display: flex; align-items: center; gap: 0.5rem; color: var(--text-secondary); }
+.auth-footer { text-align: center; border-top: 1px solid var(--border-light); padding-top: 1.5rem; }
+.feature-item {
+background: var(--bg-card); padding: 1.5rem; border-radius: var(--border-radius-md);
+box-shadow: var(--box-shadow); border: 1px solid var(--border-light);
+}
+.feature-item i { font-size: 2rem; color: var(--primary); margin-bottom: 1rem; }
+/* ======================================== /
+/ ··· ГЛАВНАЯ СТРАНИЦА ··· /
+/ ======================================== */
+.hero-section {
+position: relative; background: linear-gradient(135deg, var(--primary-light), white);
+padding: 4rem 0; overflow: hidden;
+}
+.hero-badge {
+display: inline-block; background: var(--primary); color: white;
+padding: 0.25rem 1rem; border-radius: var(--border-radius-full); font-size: 0.875rem;
+}
+.hero-title { font-size: 3rem; font-weight: 800; line-height: 1.2; }
+.hero-description { font-size: 1.25rem; color: var(--text-secondary); max-width: 500px; }
+.hero-buttons { display: flex; gap: 1rem; margin: 2rem 0; }
+.hero-stats { display: flex; gap: 2rem; }
+.stat-number { font-size: 2rem; font-weight: 800; color: var(--primary); }
+.section-header { text-align: center; margin-bottom: 3rem; }
+.section-subtitle { color: var(--primary); font-weight: 600; text-transform: uppercase; font-size: 0.875rem; }
+.section-title { font-size: 2.5rem; font-weight: 800; }
+/* Карточки курсов */
+.course-card {
+background: var(--bg-card); border-radius: var(--border-radius-lg); padding: 2rem;
+box-shadow: var(--box-shadow); border: 1px solid var(--border-light); height: 100%;
+}
+.course-card:hover { transform: translateY(-4px); box-shadow: var(--box-shadow-hover); }
+.course-icon {
+width: 60px; height: 60px; background: var(--primary-light);
+border-radius: var(--border-radius-md); display: flex; align-items: center; justify-content: center;
+margin-bottom: 1rem;
+}
+.course-icon i { font-size: 2rem; color: var(--primary); }
+.course-meta { display: flex; gap: 1rem; margin: 1rem 0; color: var(--text-muted); font-size: 0.875rem; }
+/* Секция преимуществ */
+.features-section { background: var(--border-light); }
+.feature-card {
+text-align: center; padding: 2rem; background: var(--bg-card);
+border-radius: var(--border-radius-md); height: 100%;
+}
+/* ========================================  /
+/  ··· СТРАНИЦА ЗАЯВОК ···  /
+/  ======================================== */
+.dashboard-header { background: var(--primary-light); padding: 2rem 0; margin-bottom: 2rem; }
+.dashboard-header-content { display: flex; align-items: center; justify-content: space-between; }
+.stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-bottom: 2rem; }
+.stat-card {
+background: var(--bg-card); border-radius: var(--border-radius-md); padding: 1.5rem;
+display: flex; align-items: center; gap: 1rem; box-shadow: var(--box-shadow);
+}
+.stat-icon {
+width: 50px; height: 50px; border-radius: var(--border-radius-md);
+display: flex; align-items: center; justify-content: center;
+}
+.stat-icon.blue { background: var(--primary-light); color: var(--primary); }
+.stat-icon.green { background: #e0fff2; color: var(--secondary); }
+.stat-value { font-size: 1.5rem; font-weight: 700; }
+.filters-bar { display: flex; justify-content: space-between; margin-bottom: 2rem; }
+.filter-tabs { display: flex; gap: 0.5rem; background: var(--bg-card); padding: 0.25rem; border-radius: var(--border-radius-full); }
+.filter-tab {
+padding: 0.5rem 1.25rem; border: none; background: transparent; border-radius: var(--border-radius-full);
+cursor: pointer; color: var(--text-muted);
+}
+.filter-tab.active { background: var(--primary); color: white; }
+.search-box { position: relative; }
+.search-box i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); }
+.search-box input { padding: 0.5rem 1rem 0.5rem 2.5rem; border: 2px solid var(--border-color); border-radius: var(--border-radius-full); }
+.applications-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 1.5rem; }
+.application-card {
+background: var(--bg-card); border-radius: var(--border-radius-md); box-shadow: var(--box-shadow);
+border: 1px solid var(--border-light); overflow: hidden;
+}
+.application-header {
+padding: 1rem; border-bottom: 1px solid var(--border-light);
+display: flex; justify-content: space-between; align-items: center;
+}
+.status-badge { padding: 0.25rem 0.75rem; border-radius: var(--border-radius-full); font-size: 0.75rem; }
+.status-new { background: var(--primary-light); color: var(--primary-dark); }
+.status-progress { background: var(--accent); color: #000; }
+.status-completed { background: var(--secondary); color: #000; }
+.application-body { padding: 1rem; }
+.info-row { display: flex; justify-content: space-between; margin-bottom: 0.5rem; }
+.info-label { color: var(--text-muted); }
+.application-footer { padding: 1rem; background: var(--border-light); }
+.btn-review { color: var(--secondary); text-decoration: none; }
+.empty-state { text-align: center; padding: 4rem; background: var(--bg-card); border-radius: var(--border-radius-lg); }
+.empty-state-icon {
+width: 100px; height: 100px; background: var(--primary-light);
+border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;
+}
+.empty-state-icon i { font-size: 3rem; color: var(--primary); }
+/* ======================================== /
+/ ··· ОТЗЫВЫ ··· /
+/ ======================================== */
+.course-info-card {
+background: var(--primary); border-radius: var(--border-radius-md); padding: 1.5rem;
+color: white; margin-bottom: 2rem; display: flex; gap: 1rem; align-items: center;
+}
+.course-info-icon {
+width: 60px; height: 60px; background: rgba(255,255,255,0.2);
+border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+.course-info-icon i { font-size: 2rem; color: white; }
+.rating-input { display: flex; gap: 0.5rem; }
+.rating-star { cursor: pointer; font-size: 1.5rem; color: #cbd5e1; }
+.rating-star input { display: none; }
+.rating-star:hover { color: #fbbf24; }
+/* ======================================== /
+/ ··· ФОРМА ПОДАЧИ ЗАЯВКИ ··· /
+/ ======================================== */
+.form-progress { display: flex; justify-content: space-between; margin-bottom: 2rem; }
+.progress-step { text-align: center; flex: 1; }
+.step-number {
+width: 40px; height: 40px; background: var(--bg-card); border: 2px solid var(--border-color);
+border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto;
+}
+.progress-step.active .step-number { background: var(--primary); border-color: var(--primary); color: white; }
+.form-step { display: none; }
+.form-step.active { display: block; }
+.course-cards-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+.course-option-card input[type="radio"] { display: none; }
+.course-option-card label {
+display: block; padding: 1rem; border: 2px solid var(--border-color);
+border-radius: var(--border-radius-md); text-align: center; cursor: pointer;
+}
+.course-option-card input:checked + label { border-color: var(--primary); background: var(--primary-light); }
+.payment-options { display: flex; gap: 1rem; }
+.payment-option input { display: none; }
+.payment-option-content {
+display: block; padding: 0.5rem 1rem; border: 2px solid var(--border-color);
+border-radius: var(--border-radius-md); cursor: pointer;
+}
+.payment-option input:checked + .payment-option-content { border-color: var(--primary); background: var(--primary-light); }
+.form-navigation { display: flex; gap: 1rem; margin-top: 2rem; }
+/* ======================================== /
+/ ··· ФУТЕР ··· /
+/ ======================================== */
+.footer {
+background: var(--text-primary); color: white; padding: 3rem 0 1rem;
+margin-top: 4rem;
+}
+.footer-logo { display: flex; align-items: center; gap: 0.5rem; font-size: 1.5rem; font-weight: 700; }
+.footer-links { list-style: none; padding: 0; }
+.footer-links li { margin-bottom: 0.5rem; }
+.footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; }
+.footer-links a:hover { color: white; }
+.footer-bottom { text-align: center; padding-top: 2rem; border-top: 1px solid rgba(255,255,255,0.1); }
+/* ======================================== /
+/ ··· АДАПТИВНОСТЬ ··· /
+/ ======================================== */
+@media (max-width: 768px) {
+h1 { font-size: 2rem; }
+.hero-title { font-size: 2.5rem; }
+.auth-wrapper { grid-template-columns: 1fr; }
+.stats-grid { grid-template-columns: 1fr; }
+.filters-bar { flex-direction: column; }
+.course-cards-grid { grid-template-columns: 1fr; }
+}
+</pre></div></div>
+
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Все файлы исправлены: добавлены теги &lt;form&gt;, &lt;input&gt;, исправлены CSS-свойства без пробелов, добавлена правильная HTML-структура.</p>
+</div>
+</section>
+</div>
+</div>
+<footer>
+<hr/>
+<div role="contentinfo">
+<p>&#169; Авторские права 2025, Irsp-122. </p>
+</div>
+</footer>
+</div>
+</div>
+</section>
+</div>
+<script>
+jQuery(function () {
+SphinxRtdTheme.Navigation.enable(true);
+});
+</script>
+</body>
+</html>
